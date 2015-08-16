@@ -1,0 +1,25 @@
+{
+  "name": "sai-tracker",
+  "version": "0.0.0",
+  "homepage": "https://github.com/nicolas-van/sai-tracker",
+  "authors": [
+    "Nicolas Vanhoren <nicolas.vanhoren@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.4",
+    "ring": "~2.0.2",
+    "spear": "~0.3.0",
+    "bootstrap": "~3.3.5"
+  },
+  "devDependencies": {
+    "headjs": "~1.0.3"
+  }
+}

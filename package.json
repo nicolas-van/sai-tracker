@@ -1,0 +1,34 @@
+{
+  "name": "sai-tracker",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/nicolas-van/sai-tracker.git"
+  },
+  "author": "",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/nicolas-van/sai-tracker/issues"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "underscore": "~1.8.3",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-contrib-clean": "~0.6.0",
+    "grunt-contrib-cssmin": "~0.13.0",
+    "grunt-contrib-uglify": "~0.9.1",
+    "grunt-file-creator": "~0.1.3",
+    "commander": "~2.8.1",
+    "grunt-shell": "~1.1.2",
+    "grunt-contrib-copy": "~0.8.0",
+    "grunt-contrib-concat": "~0.5.1",
+    "express": "~4.13.3",
+    "grunt-contrib-less": "~1.0.1",
+    "grunt-contrib-jshint": "~0.11.2"
+  }
+}
