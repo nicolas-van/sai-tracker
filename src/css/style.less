@@ -13,19 +13,19 @@ body {
     overflow: hidden;
 }
 
+@app-width: 960px;
+@app-height: 540px;
+@top-height: 45px;
+@bottom-height: 100px;
+@right-width: 350px;
+
 .app-container {
-    @app-width: 960px;
-    @app-height: 540px;
     display: inline-block;
     overflow: hidden;
     position: relative;
     background-color: #464545;
     width: @app-width;
     height: @app-height;
-
-    @top-height: 45px;
-    @bottom-height: 70px;
-    @right-width: 350px;
 
     .top-area {
         position: absolute;
@@ -47,8 +47,6 @@ body {
         height: @app-height - @top-height - @bottom-height;
         top: @top-height;
         left: @app-width - @right-width;
-        overflow-x: hidden;
-        overflow-y: auto;
     }
     .bottom-area {
         position: absolute;
@@ -60,8 +58,16 @@ body {
 }
 
 .synth-params {
-    display: table;
-    width: 100%;
+    margin: 3px;
+    border: 1px solid lighten(#464545, 30%);
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 100%;
+
+    .synth-param-table {
+        display: table;
+        width: 100%;
+    }
     .synth-param-row {
         display: table-row;
     }
