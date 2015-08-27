@@ -26,11 +26,95 @@
             <div class="synth-param-block">
                 <div class="synth-param-block-content">
                     <span class="synth-block-title">Oscillator 1</span>
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-xs-6 control-label">Type</label>
+                            <div class="col-xs-6">
+                                <select class="osc1-type form-control" type="number">
+                                    <option value="sine" selected>Sine</option>
+                                    <option value="square">Square</option>
+                                    <option value="sawtooth">Sawtooth</option>
+                                    <option value="triangle">Triangle</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-6 control-label">Gain</label>
+                            <div class="col-xs-6">
+                                <input class="osc1-gain form-control" type="number" value="1" step="0.1"></input>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-6 control-label">F Osc Amt</label>
+                            <div class="col-xs-6">
+                                <input class="osc1-freq-osc-amt form-control" type="number" value="0" step="0.1"></input>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-6 control-label">F Osc</label>
+                            <div class="col-xs-6">
+                                <select class="osc1-freq-osc-type form-control" type="number">
+                                    <option value="sine" selected>Sine</option>
+                                    <option value="square">Square</option>
+                                    <option value="sawtooth">Sawtooth</option>
+                                    <option value="triangle">Triangle</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-6 control-label">F Osc Freq</label>
+                            <div class="col-xs-6">
+                                <input class="osc1-freq-osc-freq form-control" type="number" value="10" step="1"></input>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="synth-param-block">
                 <div class="synth-param-block-content">
                     <span class="synth-block-title">Oscillator 2</span>
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-xs-6 control-label">Type</label>
+                            <div class="col-xs-6">
+                                <select class="osc2-type form-control" type="number">
+                                    <option value="sine" selected>Sine</option>
+                                    <option value="square">Square</option>
+                                    <option value="sawtooth">Sawtooth</option>
+                                    <option value="triangle">Triangle</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-6 control-label">Gain</label>
+                            <div class="col-xs-6">
+                                <input class="osc2-gain form-control" type="number" value="0" step="0.1"></input>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-6 control-label">F Osc Amt</label>
+                            <div class="col-xs-6">
+                                <input class="osc2-freq-osc-amt form-control" type="number" value="0" step="0.1"></input>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-6 control-label">F Osc</label>
+                            <div class="col-xs-6">
+                                <select class="osc2-freq-osc-type form-control" type="number">
+                                    <option value="sine" selected>Sine</option>
+                                    <option value="square">Square</option>
+                                    <option value="sawtooth">Sawtooth</option>
+                                    <option value="triangle">Triangle</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-6 control-label">F Osc Freq</label>
+                            <div class="col-xs-6">
+                                <input class="osc2-freq-osc-freq form-control" type="number" value="10" step="1"></input>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -38,19 +122,122 @@
             <div class="synth-param-block">
                 <div class="synth-param-block-content">
                     <span class="synth-block-title">Envelope</span>
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-xs-6 control-label">Gain</label>
+                            <div class="col-xs-6">
+                                <input class="env-gain form-control" type="number" value="0.5" step="0.1"></input>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-6 control-label">Attack</label>
+                            <div class="col-xs-6">
+                                <input class="env-attack form-control" type="number" value="0.05" step="0.1"></input>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-6 control-label">Sustain</label>
+                            <div class="col-xs-6">
+                                <input class="env-sustain form-control" type="number" value="0.3" step="0.1"></input>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-6 control-label">Release</label>
+                            <div class="col-xs-6">
+                                <input class="env-release form-control" type="number" value="0.1" step="0.1"></input>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="synth-param-block">
                 <div class="synth-param-block-content">
                     <span class="synth-block-title">Effects</span>
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-xs-6 control-label">Noise</label>
+                            <div class="col-xs-6">
+                                <input class="noise form-control" type="number" value="0" step="0.1"></input>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-xs-6 control-label">Delay Amt</label>
+                            <div class="col-xs-6">
+                                <input class="delay-amount form-control" type="number" value="0" step="0.1"></input>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-xs-6 control-label">Delay Tim</label>
+                            <div class="col-xs-6">
+                                <input class="delay-time form-control" type="number" value="0.3" step="0.1"></input>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-xs-6 control-label">Pan Amt</label>
+                            <div class="col-xs-6">
+                                <input class="pan-amount form-control" type="number" value="0" step="0.1"></input>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-xs-6 control-label">Pan Freq</label>
+                            <div class="col-xs-6">
+                                <input class="pan-frequency form-control" type="number" value="2" step="1"></input>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </script>
-    <script>
-    $(function() {
-        saitracker.init();
-    });
+        <div class="synth-param-row">
+            <div class="synth-param-block">
+                <div class="synth-param-block-content">
+                    <span class="synth-block-title">Filters</span>
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-xs-6 control-label">Type</label>
+                            <div class="col-xs-6">
+                                <select class="filter-type form-control" type="number">
+                                    <option value="lowpass">Lowpass</option>
+                                    <option value="highpass" selected>Highpass</option>
+                                    <option value="bandpass">Bandpass</option>
+                                    <option value="lowshelf">Lowshelf</option>
+                                    <option value="peaking">Peaking</option>
+                                    <option value="notch">Notch</option>
+                                    <option value="allpass">Allpass</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-6 control-label">Freq</label>
+                            <div class="col-xs-6">
+                                <input class="filter-freq form-control" type="number" value="0" step="1"></input>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-6 control-label">Q</label>
+                            <div class="col-xs-6">
+                                <input class="filter-q form-control" type="number" value="1000" step="1"></input>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-6 control-label">Gain</label>
+                            <div class="col-xs-6">
+                                <input class="filter-gain form-control" type="number" value="1" step="1"></input>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="play-btn">Play</button>
     </script>
 </head>
 <body>

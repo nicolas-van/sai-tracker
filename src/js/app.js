@@ -24,6 +24,7 @@
     }
 
     saitracker.init = function() {
+        saitracker.audioCtx = new AudioContext();
         var app = new saitracker.App().appendTo($("body"));
         resizeBody();
         $(window).resize(resizeBody);
@@ -42,42 +43,71 @@
     });
 
     saitracker.SynthParams = widget.Widget.$extend({
+        domEvents: {
+            "click .play-btn": "doIt",
+        },
         className: "synth-params",
         render: function() {
             return _.template($("#synth-params-tmpl").html());
+        },
+        fval: function(input) {
+            var e = this.$("." + input);
+            if (e.length !== 1)
+                throw new ring.ValueError("input with class '" + input + "' not found");
+            var v = e.val();
+            if (! v)
+                throw new ring.ValueError("invalid value");
+            var pv = parseFloat(v);
+            return isNaN(pv) ? v : pv;
         },
         doIt: function() {
             var x = {
                 oscillators: [
                     {
-                        type: "sine",
-                        gain: 1,
+                        type: this.fval("osc1-type"),
+                        gain: this.fval("osc1-gain"),
                         freqOsc: {
-                            type: "sine",
-                            amount: 255 * 100,
-                            frequency: Math.pow(2, 8 - 8),
+                            type: this.fval("osc1-freq-osc-type"),
+                            frequency: this.fval("osc1-freq-osc-freq"),
+                            amount: this.fval("osc1-freq-osc-amt"),
                         },
                     },
+                    {
+                        type: this.fval("osc2-type"),
+                        gain: this.fval("osc2-gain"),
+                        freqOsc: {
+                            type: this.fval("osc2-freq-osc-type"),
+                            frequency: this.fval("osc2-freq-osc-freq"),
+                            amount: this.fval("osc2-freq-osc-amt"),
+                        },
+                    }
                 ],
                 filters: [
-                    /*{
-                        type: "bandpass",
-                        frequency: 10000,
-                        gain: 0,
-                        q: 1000,
-                    },*/
+                    {
+                        type: this.fval("filter-type"),
+                        frequency: this.fval("filter-freq"),
+                        gain: this.fval("filter-gain"),
+                        q: this.fval("filter-q"),
+                    },
                 ],
-                attack: 0.05,
-                sustain: 0.2,
-                release: 0.1,
-                gain: 0.2,
-                noise: 0,
-                delay: 0,
-                delayTime: 0.3,
-                panAmount: 0,
-                panFrequency: 2,
+                attack: this.fval("env-attack"),
+                sustain: this.fval("env-sustain"),
+                release: this.fval("env-release"),
+                gain: this.fval("env-gain"),
+                noise: this.fval("noise"),
+                delay: this.fval("delay-amount"),
+                delayTime: this.fval("delay-time"),
+                panAmount: this.fval("pan-amount"),
+                panFrequency: this.fval("pan-frequency"),
             };
+            var t = new sai.Track(saitracker.audioCtx, x);
+            t.output.connect(saitracker.audioCtx.destination);
+            t.playNote(69, saitracker.audioCtx.currentTime);
         },
+    });
+
+    $(function() {
+        saitracker.init();
     });
     
 })();
