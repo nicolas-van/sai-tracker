@@ -40,12 +40,20 @@
             this.track.output.connect(saitracker.audioCtx.destination);
             this.keys = new saitracker.Keys(this).appendTo(this.$(".bottom-area"));
             this.keys.on("notePressed", _.bind(this.playNote, this));
+            this.keys.on("noteReleased", _.bind(this.stopNote, this));
+            this.lastNote = null;
         },
         render: function() {
             return _.template($("#app-container-tmpl").html());
         },
         playNote: function(note) {
-            this.track.playNote(note, saitracker.audioCtx.currentTime);
+            if (this.lastNote)
+                this.lastNote.end();
+            this.lastNote = this.track.playNote(note, saitracker.audioCtx.currentTime, false);
+        },
+        stopNote: function(note) {
+            if (this.lastNote)
+                this.lastNote.end();
         },
         updateInst: function() {
             this.track.setInstrument(this.synthParams.get("instrument"));
@@ -129,7 +137,11 @@
         },
         domEvents: {
             "mousedown >div": "calcKey",
+            "mouseup >div": "calcKey",
+            "mouseenter >div": "calcKey",
+            "mouseleave >div": "calcKey",
         },
+        current: null,
         apply: function() {
             var width = this.$().innerWidth();
             var height = this.$().innerHeight();
@@ -175,7 +187,15 @@
             }, this);
         },
         calcKey: function(e) {
-            this.trigger("notePressed", $(e.target).data("note"));
+            var note = $(e.target).data("note");
+            if (e.type === "mousedown") {
+                this.trigger("notePressed", note);
+            } else if(e.type === "mouseenter") {
+                if (e.which === 1)
+                    this.trigger("notePressed", note);
+            } else if (e.type === "mouseup" || e.type === "mouseleave") {
+                this.trigger("noteReleased", note);
+            }
         }
     });
 
