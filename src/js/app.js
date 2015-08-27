@@ -35,6 +35,9 @@
         constructor: function(parent) {
             this.$super(parent);
             this.synthParams = new saitracker.SynthParams(this).appendTo(this.$(".right-area"));
+            this.synthParams.on("change:instrument", this.updateInst.bind(this));
+            this.track = new sai.Track(saitracker.audioCtx, this.synthParams.get("instrument"));
+            this.track.output.connect(saitracker.audioCtx.destination);
             this.keys = new saitracker.Keys(this).appendTo(this.$(".bottom-area"));
             this.keys.on("notePressed", _.bind(this.playNote, this));
         },
@@ -42,14 +45,23 @@
             return _.template($("#app-container-tmpl").html());
         },
         playNote: function(note) {
-            var t = new sai.Track(saitracker.audioCtx, this.synthParams.getInst());
-            t.output.connect(saitracker.audioCtx.destination);
-            t.playNote(note, saitracker.audioCtx.currentTime);
+            this.track.playNote(note, saitracker.audioCtx.currentTime);
+        },
+        updateInst: function() {
+            this.track.setInstrument(this.synthParams.get("instrument"));
         },
     });
 
     saitracker.SynthParams = widget.Widget.$extend({
         className: "synth-params",
+        domEvents: {
+            "change input": "updateInst",
+            "change select": "updateInst",
+        },
+        constructor: function(parent) {
+            this.$super(parent);
+            this.updateInst();
+        },
         render: function() {
             return _.template($("#synth-params-tmpl").html());
         },
@@ -63,7 +75,7 @@
             var pv = parseFloat(v);
             return isNaN(pv) ? v : pv;
         },
-        getInst: function() {
+        updateInst: function() {
             var inst = {
                 oscillators: [
                     {
@@ -105,7 +117,8 @@
                 panAmount: this.fval("pan-amount"),
                 panFrequency: this.fval("pan-frequency"),
             };
-            return inst;
+            if (! _.isEqual(inst, this.get("instrument")))
+                this.set("instrument", inst);
         },
     });
 
