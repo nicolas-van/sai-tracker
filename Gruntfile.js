@@ -10,6 +10,7 @@ module.exports = function(grunt) {
         "bower_components/bootstrap/dist/js/bootstrap.js",
         "bower_components/ring/ring.js",
         "bower_components/widget/widget.js",
+        "sai-experiment/sai-experiment.js",
     ];
     var myjsfiles = [
         "src/js/app.js",
@@ -85,6 +86,7 @@ module.exports = function(grunt) {
                 files: [
                     {expand: true, flatten: true, cwd: 'bower_components/bootstrap/dist/fonts/', src: ['*'], dest: 'static/libs/bootstrap/'},
                     {expand: true, flatten: true, cwd: 'src/fonts/', src: ['*'], dest: 'static/fonts/'},
+                    {src: "src/img/icon.png", dest: "static/img/icon.png"},
                 ]
             }
         },
