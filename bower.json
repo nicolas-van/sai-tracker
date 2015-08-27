@@ -15,9 +15,8 @@
   ],
   "dependencies": {
     "jquery": "~2.1.4",
-    "ring": "~2.0.2",
-    "spear": "~0.3.0",
-    "bootstrap": "~3.3.5"
+    "bootstrap": "~3.3.5",
+    "widget": "~0.6.0"
   },
   "devDependencies": {
     "headjs": "~1.0.3"

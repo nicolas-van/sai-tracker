@@ -9,7 +9,7 @@ module.exports = function(grunt) {
         "bower_components/jquery/dist/jquery.js",
         "bower_components/bootstrap/dist/js/bootstrap.js",
         "bower_components/ring/ring.js",
-        "bower_components/spear/spear.js",
+        "bower_components/widget/widget.js",
     ];
     var myjsfiles = [
         "src/js/app.js",
@@ -126,6 +126,13 @@ module.exports = function(grunt) {
                 }
             }
         },
+        connect: {
+            server: {
+                options: {
+                    base: '.',
+                }
+            }
+        },
     });
 
     grunt.loadNpmTasks('grunt-contrib-less');
@@ -135,6 +142,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-shell');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-file-creator');
@@ -142,7 +150,7 @@ module.exports = function(grunt) {
     grunt.registerTask('gen', ['jshint', 'less', 'copy', 'shell:images']);
     grunt.registerTask('dev', ['gen', 'file-creator:dev_tmpjs', 'file-creator:dev_css', "concat:dev", "clean:tmpjs"]);
     grunt.registerTask('dist', ['gen', 'uglify:dist', 'cssmin', "clean:tmp"]);
-    grunt.registerTask('watcher', ['dev', 'watch']);
+    grunt.registerTask('watcher', ['dev', 'connect', 'watch']);
 
     grunt.registerTask('default', ['dev']);
 

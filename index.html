@@ -7,19 +7,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="static/style.css">
     <script src="static/all.js"></script>
+    <script type="text/template" id="app-container-tmpl">
+        <div class="top-area">
+            Test Top
+        </div>
+        <div class="left-area">
+            Test Left
+        </div>
+        <div class="right-area">
+            Test Right
+        </div>
+        <div class="bottom-area">
+            Test Bottom
+        </div>
+    </script>
+    <script>
+    $(function() {
+        saitracker.init();
+    });
+    </script>
 </head>
 <body>
-    <div class="app-container" style="width: 960px; height: 540px;">
-        <div class="main-table">
-            <div class="left-side">
-                Hello
-            </div>
-            <div class="right-side">
-                <div class="top-panel">
-                    World
-                </div>
-            </div>
-        </div>
-    </div>
 </body>
 </html>

@@ -2,6 +2,8 @@
 (function() {
 "use strict";
 
+    window.saitracker = {};
+
     function resizeBody() {
         var bw = $(".app-container").width();
         var bh = $(".app-container").height();
@@ -19,8 +21,19 @@
         var yt = (wh - (scale * bh)) / 2;
         $(".app-container").css("transform-origin", "top left");
         $(".app-container").css("transform", "translate(" + xt + "px, " + yt + "px) scale(" + scale + "," + scale + ")");
+    }
+
+    saitracker.init = function() {
+        var app = new saitracker.App().appendTo($("body"));
+        resizeBody();
+        $(window).resize(resizeBody);
     };
-    resizeBody();
-    $(window).resize(resizeBody);
+
+    saitracker.App = widget.Widget.$extend({
+        className: "app-container",
+        render: function() {
+            return _.template($("#app-container-tmpl").html());
+        },
+    });
     
 })();
