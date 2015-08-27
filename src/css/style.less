@@ -88,4 +88,34 @@ body {
     }
 }
 
+.keys {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: blue;
+    border: 1px solid lighten(#464545, 30%);
+    margin: 3px;
+    padding: 3px;
+    > div {
+        position: absolute;
+        border: 1px solid black;
+        &.white {
+            background-color: white;
+            z-index: 0;
+        }
+        &.black {
+            background-color: black;
+            z-index: 1;
+        }
+        span {
+            position: absolute;
+            bottom: 0;
+            left: 5px;
+            pointer-events: none;
+        }
+    }
+}
+
 
