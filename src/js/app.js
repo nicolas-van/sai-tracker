@@ -119,7 +119,6 @@
                 sustainTime: this.fval("env-sustain-time"),
                 release: this.fval("env-release"),
                 gain: this.fval("env-gain"),
-                noise: this.fval("noise"),
                 delay: this.fval("delay-amount"),
                 delayTime: this.fval("delay-time"),
                 panAmount: this.fval("pan-amount"),
