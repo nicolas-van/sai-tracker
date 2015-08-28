@@ -41,19 +41,20 @@
             this.keys = new saitracker.Keys(this).appendTo(this.$(".bottom-area"));
             this.keys.on("notePressed", _.bind(this.playNote, this));
             this.keys.on("noteReleased", _.bind(this.stopNote, this));
-            this.lastNote = null;
+            this.notes = {};
         },
         render: function() {
             return _.template($("#app-container-tmpl").html());
         },
         playNote: function(note) {
-            if (this.lastNote)
-                this.lastNote.end();
-            this.lastNote = this.track.playNote(note, saitracker.audioCtx.currentTime, false);
+            this.stopNote(note);
+            this.notes[note] = this.track.playNote(note, saitracker.audioCtx.currentTime, false);
         },
         stopNote: function(note) {
-            if (this.lastNote)
-                this.lastNote.end();
+            if (this.notes[note]) {
+                this.notes[note].end();
+                this.notes[note] = null;
+            }
         },
         updateInst: function() {
             this.track.setInstrument(this.synthParams.get("instrument"));
@@ -134,13 +135,19 @@
         events: {
             "appendedToDom": "apply",
         },
-        domEvents: {
-            "mousedown >div": "calcKey",
-            "mouseup >div": "calcKey",
-            "mouseenter >div": "calcKey",
-            "mouseleave >div": "calcKey",
+        constructor: function(parent) {
+            this.$super(parent);
+            /*if (Modernizr.touch) {
+                this.$().on("touchstart", this.calcTouch.bind(this))
+                    .on("touchend", this.calcTouch.bind(this))
+                    .on("touchmove", this.calcTouch.bind(this));
+            } else {*/
+                this.$().on("mousedown", ">div", this.calcKeyboard.bind(this))
+                    .on("mouseup", ">div", this.calcKeyboard.bind(this))
+                    .on("mouseenter", ">div", this.calcKeyboard.bind(this))
+                    .on("mouseleave", ">div", this.calcKeyboard.bind(this));
+            /*}*/
         },
-        current: null,
         apply: function() {
             var width = this.$().innerWidth();
             var height = this.$().innerHeight();
@@ -185,17 +192,30 @@
                 pos += kwidth;
             }, this);
         },
-        calcKey: function(e) {
+        calcKeyboard: function(e) {
             var note = $(e.target).data("note");
             if (e.type === "mousedown") {
                 this.trigger("notePressed", note);
             } else if(e.type === "mouseenter") {
                 if (e.which === 1)
                     this.trigger("notePressed", note);
-            } else if (e.type === "mouseup" || e.type === "mouseleave") {
+            } else if (e.type === "mouseup") {
                 this.trigger("noteReleased", note);
+            } else if (e.type === "mouseleave") {
+                if (e.which === 1)
+                    this.trigger("noteReleased", note);
             }
-        }
+        },
+        calcTouch: function(e) {
+            var note = $(e.target).data("note");
+            if (e.type === "touchstart") {
+                this.trigger("notePressed", note);
+            } else if (e.type === "touchend") {
+                this.trigger("noteReleased", note);
+            } else if (e.type === "touchmove") {
+
+            }
+        },
     });
 
     $(function() {

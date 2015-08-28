@@ -10,6 +10,7 @@ module.exports = function(grunt) {
         "bower_components/bootstrap/dist/js/bootstrap.js",
         "bower_components/ring/ring.js",
         "bower_components/widget/widget.js",
+        "bower_components/modernizr/modernizr.js",
         "sai-experiment/sai-experiment.js",
     ];
     var myjsfiles = [
