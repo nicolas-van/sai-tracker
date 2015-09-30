@@ -136,17 +136,19 @@
             "appendedToDom": "apply",
         },
         constructor: function(parent) {
+            this.fingers = {};
             this.$super(parent);
             /*if (Modernizr.touch) {
-                this.$().on("touchstart", this.calcTouch.bind(this))
+                this.$(".keyboad-overlay").on("touchstart", this.calcTouch.bind(this))
                     .on("touchend", this.calcTouch.bind(this))
                     .on("touchmove", this.calcTouch.bind(this));
             } else {*/
-                this.$().on("mousedown", ">div", this.calcKeyboard.bind(this))
-                    .on("mouseup", ">div", this.calcKeyboard.bind(this))
-                    .on("mouseenter", ">div", this.calcKeyboard.bind(this))
-                    .on("mouseleave", ">div", this.calcKeyboard.bind(this));
-            /*}*/
+                this.$().on("mousedown", ".keyboad-overlay", this.calcKeyboard.bind(this))
+                    .on("mouseup", ".keyboad-overlay", this.calcKeyboard.bind(this))
+                    .on("mouseenter", ".keyboad-overlay", this.calcKeyboard.bind(this))
+                    .on("mouseout", ".keyboad-overlay", this.calcKeyboard.bind(this))
+                    .on("mousemove", ".keyboad-overlay", this.calcKeyboard.bind(this));
+            //}
         },
         apply: function() {
             var width = this.$().innerWidth();
@@ -163,10 +165,13 @@
             var bkheight = kheight * blackHProp;
             var pos = 0;
             var note = firstNote;
+            var blacks = [];
+            var whites = [];
             _.each(_.range(nbrWhite), function(i) {
                 var k = $("<div></div>");
                 k.css("top", 0);
                 k.css("left", pos);
+                k.data("left", pos);
                 k.css("width", kwidth);
                 k.css("height", kheight);
                 k.addClass("white");
@@ -175,36 +180,68 @@
                     k.append($("<span></span>").text(Math.floor(note / 12) - 1));
                 }
                 this.$().append(k);
+                whites.push(k);
                 note += 1;
 
                 if (_.contains([0, 1, 3, 4, 5], (i + offset) % 7)) {
                     k = $("<div></div>");
                     k.css("top", 0);
                     k.css("left", pos + kwidth - (bkwidth / 2));
+                    k.data("left", pos + kwidth - (bkwidth / 2));
                     k.css("width", bkwidth);
                     k.css("height", bkheight);
                     k.addClass("black");
                     k.data("note", note);
                     this.$().append(k);
+                    blacks.push(k);
                     note += 1;
                 }
 
                 pos += kwidth;
             }, this);
+            this.keys = [].concat(blacks).concat(whites);
+            this.$().append($("<div></div>").addClass("keyboad-overlay"));
         },
         calcKeyboard: function(e) {
-            var note = $(e.target).data("note");
-            if (e.type === "mousedown") {
-                this.trigger("notePressed", note);
-            } else if(e.type === "mouseenter") {
-                if (e.which === 1)
-                    this.trigger("notePressed", note);
-            } else if (e.type === "mouseup") {
-                this.trigger("noteReleased", note);
-            } else if (e.type === "mouseleave") {
-                if (e.which === 1)
-                    this.trigger("noteReleased", note);
+            var finger = this.finger(0);
+            if ((e.type === "mouseout" || e.type === "mouseup") && finger.current !== null) {
+                this.trigger("noteReleased", finger.current);
+                finger.current = null;
+                return;
             }
+            var note = this.findNote(e.offsetX, e.offsetY);
+            if (note === null)
+                return;
+            if (e.type === "mousedown" || (e.type === "mouseenter" && e.which === 1)) {
+                /*if (finger.current !== null) {
+                    this.trigger("noteReleased", finger.current);
+                }*/
+                console.log("note", note);
+                this.trigger("notePressed", note);
+                finger.current = note;
+            } else if (e.type === "mousemove") {
+                if (finger.current !== null && finger.current !== note) {
+                    this.trigger("noteReleased", finger.current);
+                    this.trigger("notePressed", note);
+                    console.log("note", note);
+                    finger.current = note;
+                }
+            }
+        },
+        findNote: function(x, y) {
+            for (var i = 0; i < this.keys.length; i++) {
+                var k = this.keys[i];
+                if (x >= k.data("left") && x <= k.data("left") + k.width() &&
+                    y >= 0 && y <= k.height())
+                    return k.data("note");
+            }
+            return null;
+        },
+        finger: function(num) {
+            if (! (("" + num) in this.fingers)) {
+                this.fingers[num] = {current: null};
+            }
+            return this.fingers[num];
         },
         calcTouch: function(e) {
             var note = $(e.target).data("note");

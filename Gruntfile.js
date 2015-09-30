@@ -153,8 +153,8 @@ module.exports = function(grunt) {
     grunt.registerTask('gen', ['jshint', 'less', 'copy', 'shell:images']);
     grunt.registerTask('dev', ['gen', 'file-creator:dev_tmpjs', 'file-creator:dev_css', "concat:dev", "clean:tmpjs"]);
     grunt.registerTask('dist', ['gen', 'uglify:dist', 'cssmin', "clean:tmp"]);
-    grunt.registerTask('watcher', ['dev', 'connect', 'watch']);
+    grunt.registerTask('server', ['dev', 'connect', 'watch']);
 
-    grunt.registerTask('default', ['dev']);
+    grunt.registerTask('default', ['server']);
 
 };
