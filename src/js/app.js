@@ -4,6 +4,8 @@
 
     window.saitracker = {};
 
+    var pageScale = 1;
+
     function resizeBody() {
         var bw = $(".app-container").width();
         var bh = $(".app-container").height();
@@ -11,16 +13,15 @@
         var ww = $(window).width();
         var wh = $(window).height();
         var war = ww / wh;
-        var scale;
         if (bar > war) {
-            scale = 1 / (bw / ww);
+            pageScale = 1 / (bw / ww);
         } else {
-            scale = 1 / (bh / wh);
+            pageScale = 1 / (bh / wh);
         }
-        var xt = (ww - (scale * bw)) / 2;
-        var yt = (wh - (scale * bh)) / 2;
+        var xt = (ww - (pageScale * bw)) / 2;
+        var yt = (wh - (pageScale * bh)) / 2;
         $(".app-container").css("transform-origin", "top left");
-        $(".app-container").css("transform", "translate(" + xt + "px, " + yt + "px) scale(" + scale + "," + scale + ")");
+        $(".app-container").css("transform", "translate(" + xt + "px, " + yt + "px) scale(" + pageScale + "," + pageScale + ")");
     }
 
     saitracker.init = function() {
@@ -138,17 +139,17 @@
         constructor: function(parent) {
             this.fingers = {};
             this.$super(parent);
-            /*if (Modernizr.touch) {
-                this.$(".keyboad-overlay").on("touchstart", this.calcTouch.bind(this))
-                    .on("touchend", this.calcTouch.bind(this))
-                    .on("touchmove", this.calcTouch.bind(this));
-            } else {*/
+            if (Modernizr.touch) {
+                this.$().on("touchstart", ".keyboad-overlay", this.calcTouch.bind(this))
+                    .on("touchend", ".keyboad-overlay", this.calcTouch.bind(this))
+                    .on("touchmove", ".keyboad-overlay", this.calcTouch.bind(this));
+            } else {
                 this.$().on("mousedown", ".keyboad-overlay", this.calcKeyboard.bind(this))
                     .on("mouseup", ".keyboad-overlay", this.calcKeyboard.bind(this))
                     .on("mouseenter", ".keyboad-overlay", this.calcKeyboard.bind(this))
                     .on("mouseout", ".keyboad-overlay", this.calcKeyboard.bind(this))
                     .on("mousemove", ".keyboad-overlay", this.calcKeyboard.bind(this));
-            //}
+            }
         },
         apply: function() {
             var width = this.$().innerWidth();
@@ -213,9 +214,6 @@
             if (note === null)
                 return;
             if (e.type === "mousedown" || (e.type === "mouseenter" && e.which === 1)) {
-                /*if (finger.current !== null) {
-                    this.trigger("noteReleased", finger.current);
-                }*/
                 console.log("note", note);
                 this.trigger("notePressed", note);
                 finger.current = note;
@@ -244,14 +242,30 @@
             return this.fingers[num];
         },
         calcTouch: function(e) {
-            var note = $(e.target).data("note");
-            if (e.type === "touchstart") {
-                this.trigger("notePressed", note);
-            } else if (e.type === "touchend") {
-                this.trigger("noteReleased", note);
-            } else if (e.type === "touchmove") {
-
-            }
+            _.each(e.originalEvent.touches, _.bind(function(touch) {
+                var finger = this.finger(touch.identifier);
+                var top = this.$().offset().top;
+                var left = this.$().offset().left;
+                var x = touch.pageX - left;
+                var y = touch.pageY - top;
+                var note = this.findNote(x / pageScale, y / pageScale);
+                if (finger.current !== note) {
+                    if (finger.current !== null)
+                        this.trigger("noteReleased", finger.current);
+                    if (note !== null)
+                        this.trigger("notePressed", note);
+                    finger.current = note;
+                }
+            }, this));
+            var touches = _.map(e.originalEvent.touches, function(touch) {
+                return "" + touch.identifier;
+            });
+            _.each(this.fingers, _.bind(function(finger, id) {
+                if (! _.contains(touches, id)) {
+                    this.trigger("noteReleased", finger.current);
+                    finger.current = null;
+                }
+            }, this));
         },
     });
 
