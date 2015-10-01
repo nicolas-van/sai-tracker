@@ -215,8 +215,8 @@
         findNote: function(x, y) {
             for (var i = 0; i < this.keys.length; i++) {
                 var k = this.keys[i];
-                if (x >= k.data("left") && x <= k.data("left") + k.width() &&
-                    y >= 0 && y <= k.height())
+                if (x >= k.data("left") && x <= k.data("left") + k.outerWidth() &&
+                    y >= 0 && y <= k.outerHeight())
                     return k.data("note");
             }
             return null;
@@ -238,14 +238,12 @@
             if (note === null)
                 return;
             if (e.type === "mousedown" || (e.type === "mouseenter" && e.which === 1)) {
-                console.log("note", note);
                 this.trigger("notePressed", note);
                 finger.current = note;
             } else if (e.type === "mousemove") {
                 if (finger.current !== null && finger.current !== note) {
                     this.trigger("noteReleased", finger.current);
                     this.trigger("notePressed", note);
-                    console.log("note", note);
                     finger.current = note;
                 }
             }
@@ -270,7 +268,7 @@
                 return "" + touch.identifier;
             });
             _.each(this.fingers, _.bind(function(finger, id) {
-                if (! _.contains(touches, id)) {
+                if (! _.contains(touches, id) && finger.current !== null) {
                     this.trigger("noteReleased", finger.current);
                     finger.current = null;
                 }
