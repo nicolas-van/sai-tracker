@@ -135,6 +135,12 @@
         className: "keys",
         events: {
             "appendedToDom": "apply",
+            "notePressed": function(note) {
+                this.notes[note].addClass("pressed");
+            },
+            "noteReleased": function(note) {
+                this.notes[note].removeClass("pressed");
+            },
         },
         constructor: function(parent) {
             this.fingers = {};
@@ -144,11 +150,11 @@
                     .on("touchend", ".keyboad-overlay", this.calcTouch.bind(this))
                     .on("touchmove", ".keyboad-overlay", this.calcTouch.bind(this));
             } else {
-                this.$().on("mousedown", ".keyboad-overlay", this.calcKeyboard.bind(this))
-                    .on("mouseup", ".keyboad-overlay", this.calcKeyboard.bind(this))
-                    .on("mouseenter", ".keyboad-overlay", this.calcKeyboard.bind(this))
-                    .on("mouseout", ".keyboad-overlay", this.calcKeyboard.bind(this))
-                    .on("mousemove", ".keyboad-overlay", this.calcKeyboard.bind(this));
+                this.$().on("mousedown", ".keyboad-overlay", this.calcMouse.bind(this))
+                    .on("mouseup", ".keyboad-overlay", this.calcMouse.bind(this))
+                    .on("mouseenter", ".keyboad-overlay", this.calcMouse.bind(this))
+                    .on("mouseout", ".keyboad-overlay", this.calcMouse.bind(this))
+                    .on("mousemove", ".keyboad-overlay", this.calcMouse.bind(this));
             }
         },
         apply: function() {
@@ -168,6 +174,7 @@
             var note = firstNote;
             var blacks = [];
             var whites = [];
+            this.notes = {};
             _.each(_.range(nbrWhite), function(i) {
                 var k = $("<div></div>");
                 k.css("top", 0);
@@ -182,6 +189,7 @@
                 }
                 this.$().append(k);
                 whites.push(k);
+                this.notes[note] = k;
                 note += 1;
 
                 if (_.contains([0, 1, 3, 4, 5], (i + offset) % 7)) {
@@ -195,6 +203,7 @@
                     k.data("note", note);
                     this.$().append(k);
                     blacks.push(k);
+                    this.notes[note] = k;
                     note += 1;
                 }
 
@@ -203,7 +212,22 @@
             this.keys = [].concat(blacks).concat(whites);
             this.$().append($("<div></div>").addClass("keyboad-overlay"));
         },
-        calcKeyboard: function(e) {
+        findNote: function(x, y) {
+            for (var i = 0; i < this.keys.length; i++) {
+                var k = this.keys[i];
+                if (x >= k.data("left") && x <= k.data("left") + k.width() &&
+                    y >= 0 && y <= k.height())
+                    return k.data("note");
+            }
+            return null;
+        },
+        finger: function(num) {
+            if (! (("" + num) in this.fingers)) {
+                this.fingers[num] = {current: null};
+            }
+            return this.fingers[num];
+        },
+        calcMouse: function(e) {
             var finger = this.finger(0);
             if ((e.type === "mouseout" || e.type === "mouseup") && finger.current !== null) {
                 this.trigger("noteReleased", finger.current);
@@ -225,21 +249,6 @@
                     finger.current = note;
                 }
             }
-        },
-        findNote: function(x, y) {
-            for (var i = 0; i < this.keys.length; i++) {
-                var k = this.keys[i];
-                if (x >= k.data("left") && x <= k.data("left") + k.width() &&
-                    y >= 0 && y <= k.height())
-                    return k.data("note");
-            }
-            return null;
-        },
-        finger: function(num) {
-            if (! (("" + num) in this.fingers)) {
-                this.fingers[num] = {current: null};
-            }
-            return this.fingers[num];
         },
         calcTouch: function(e) {
             _.each(e.originalEvent.touches, _.bind(function(touch) {
