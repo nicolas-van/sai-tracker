@@ -280,40 +280,110 @@
     saitracker.NotesTable = widget.Widget.$extend({
         className: "notes-table",
         events: {
-            "appendedToDom": "apply",
+            "change:page": "pageChanged",
+            "change:selectedColumn": "changeSelected",
+            "change:selectedRow": "changeSelected",
+            "change:score": "displayScore",
+        },
+        domEvents: {
+            "click .column-header":  function(e) {
+                this.set("selectedRow", null);
+                this.set("selectedColumn", $(e.target).data("column"));
+            },
+            "click .note-input": function(e) {
+                this.set("selectedRow", $(e.target).data("row"));
+                this.set("selectedColumn", $(e.target).data("column"));
+            },
         },
         constructor: function(parent) {
-            this.$super(parent);
             this._columnsNumber = 8;
             this._rowsNumber = 16;
+            this._highRowsPeriod = 4;
+            this.$super(parent);
+            this.set("score", _.map(_.range(this._columnsNumber), function() {
+                return [];
+            }.bind(this)));
+            this.set("selectedColumn", 0);
+            this.set("selectedRow", null);
+            this.set("page", 0);
         },
-        apply: function() {
+        render: function() {
             var table = $("<table>");
-            var headers = $("<tr>");
+            var headerRow = $("<tr>");
             var col = $("<td>");
-            headers.append(col);
+            headerRow.append(col);
+            var headers = [];
             _.each(_.range(this._columnsNumber), function(i) {
-                headers.append($("<td class='column-header'>").text(i + 1));
+                var td = $("<td class='column-header'>").text(i + 1);
+                td.data("column", i);
+                headerRow.append(td);
+                headers.push(td);
             });
-            table.append(headers);
+            this._headers = headers;
+            table.append(headerRow);
             var columns = _.map(_.range(this._columnsNumber), function() {
                 return [];
             });
+            var highRows = [];
             _.each(_.range(this._rowsNumber), function(i) {
                 var row = $("<tr>");
                 var col = $("<td class='row-header'>");
+                if (i % this._highRowsPeriod === 0) {
+                    col.addClass("high-row");
+                    highRows.push(col);
+                }
                 row.append(col);
                 _.each(_.range(this._columnsNumber), function(j) {
-                    var col = $("<td class='note-input'>");
-                    row.append(col);
-                    columns[j].push(col);
+                    var td = $("<td class='note-input'>");
+                    td.data("column", j);
+                    td.data("row", i);
+                    row.append(td);
+                    columns[j].push(td);
                 });
                 table.append(row);
             }.bind(this));
+            this._columns = columns;
+            this._highRows = highRows;
             
             this.$().append(table);
-        }
+        },
+        pageChanged: function() {
+            var start = this._rowsNumber * this.get("page");
+            _.each(this._highRows, function(row) {
+                row.text("" + (start));
+                start += this._highRowsPeriod;
+            }.bind(this));
+            this.displayScore();
+        },
+        changeSelected: function() {
+            this.$(".column-header,.note-input").removeClass("selected");
+            if (this.get("selectedColumn") === null)
+                return;
+            this._headers[this.get("selectedColumn")].addClass("selected");
+            var col = this._columns[this.get("selectedColumn")];
+            if (this.get("selectedRow") !== null && this.get("selectedRow") !== undefined) {
+                col[this.get("selectedRow")].addClass("selected");
+            }
+        },
+        displayScore: function() {
+            this.$(".note-input").text("");
+            _.each(this.get("score"), function(track, i) {
+                var start = this.get("page") * this._rowsNumber;
+                var trackPart = track.slice(start, start + this._rowsNumber);
+                _.each(trackPart, function(note, j) {
+                    if (note !== null) {
+                        this._columns[i][j].text(nbrToNote(note));
+                    }
+                }.bind(this));
+            }.bind(this));
+        },
     });
+    
+    function nbrToNote(nbr) {
+        var lst = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+        var cZero = 69 - 9 - (12 * 4);
+        return "" + (lst[nbr % 12]) + (Math.floor((nbr - cZero) / 12));
+    }
 
     $(function() {
         saitracker.init();
