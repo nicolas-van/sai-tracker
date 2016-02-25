@@ -43,6 +43,7 @@
             this.keys.on("notePressed", _.bind(this.playNote, this));
             this.keys.on("noteReleased", _.bind(this.stopNote, this));
             this.notes = {};
+            this.notesTable = new saitracker.NotesTable(this).appendTo(this.$(".left-area"));
         },
         render: function() {
             return _.template($("#app-container-tmpl").html());
@@ -274,6 +275,44 @@
                 }
             }, this));
         },
+    });
+
+    saitracker.NotesTable = widget.Widget.$extend({
+        className: "notes-table",
+        events: {
+            "appendedToDom": "apply",
+        },
+        constructor: function(parent) {
+            this.$super(parent);
+            this._columnsNumber = 8;
+            this._rowsNumber = 16;
+        },
+        apply: function() {
+            var table = $("<table>");
+            var headers = $("<tr>");
+            var col = $("<td>");
+            headers.append(col);
+            _.each(_.range(this._columnsNumber), function(i) {
+                headers.append($("<td class='column-header'>").text(i + 1));
+            });
+            table.append(headers);
+            var columns = _.map(_.range(this._columnsNumber), function() {
+                return [];
+            });
+            _.each(_.range(this._rowsNumber), function(i) {
+                var row = $("<tr>");
+                var col = $("<td class='row-header'>");
+                row.append(col);
+                _.each(_.range(this._columnsNumber), function(j) {
+                    var col = $("<td class='note-input'>");
+                    row.append(col);
+                    columns[j].push(col);
+                });
+                table.append(row);
+            }.bind(this));
+            
+            this.$().append(table);
+        }
     });
 
     $(function() {

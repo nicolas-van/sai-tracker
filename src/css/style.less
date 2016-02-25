@@ -120,14 +120,14 @@ body {
         background-color: white;
         z-index: 0;
         &.pressed {
-            background-color: #FF9E9E;
+            background-color: #9EDFFF;
         }
     }
     .black {
         background-color: black;
         z-index: 1;
         &.pressed {
-            background-color: #9C0000;
+            background-color: #007DB9;
         }
     }
 
@@ -143,4 +143,39 @@ body {
 
 }
 
-
+.notes-table {
+    @width: @app-width - @right-width;
+    @height: @app-height - @top-height - @bottom-height;
+    @columns: 8;
+    @rows: 16;
+    
+    @row-header-width: 40px;
+    @column-header-height: @height / (@rows + 1);
+    
+    @common-width: (@width - @row-header-width) / @columns;
+    @common-height: (@height - @column-header-height) / @rows;
+    
+    table {
+        width: @width;
+        height: @height;
+        
+        td {
+            box-sizing: border-box;
+            padding: 0 12px;
+            border: 1px solid @gray-light;
+            text-align: center;
+        }
+        .row-header {
+            width: @row-header-width;
+            height: @common-height;
+        }
+        .column-header {
+            width: @common-width;
+            height: @column-header-height;
+        }
+        .note-input {
+            width: @common-width;
+            height: @common-height;
+        }
+    }
+}
