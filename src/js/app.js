@@ -44,6 +44,8 @@
             this.keys.on("noteReleased", _.bind(this.stopNote, this));
             this.notes = {};
             this.notesTable = new saitracker.NotesTable(this).appendTo(this.$(".left-area"));
+            this.menu = new saitracker.Menu(this).appendTo(this.$(".top-area"));
+            this.menu.on("play", this.play.bind(this));
         },
         render: function() {
             return _.template($("#app-container-tmpl").html());
@@ -51,6 +53,7 @@
         playNote: function(note) {
             this.stopNote(note);
             this.notes[note] = this.track.playNote(note, saitracker.audioCtx.currentTime, false);
+            this.notesTable.notePlayed(note);
         },
         stopNote: function(note) {
             if (this.notes[note]) {
@@ -60,6 +63,31 @@
         },
         updateInst: function() {
             this.track.setInstrument(this.synthParams.get("instrument"));
+        },
+        play: function() {
+            var score = tabScoreToSaiScore(this.notesTable.get("score"));
+            var track = score[0];
+            var song = {
+                notes: track,
+            };
+            song.duration = track.length === 0 ? 0 : track[track.length - 1][0] + ((60 / 120) / 2);
+            var tp = new sai.TrackPlayer(this.track, song);
+            tp.playTrack(false);
+        },
+    });
+    
+    saitracker.Menu = widget.Widget.$extend({
+        className: "menu",
+        domEvents: {
+            "click .play": function() {
+                this.trigger("play");
+            },
+        },
+        constructor: function(parent) {
+            this.$super(parent);
+        },
+        render: function() {
+            return _.template($("#menu-tmpl").html());
         },
     });
 
@@ -377,12 +405,40 @@
                 }.bind(this));
             }.bind(this));
         },
+        notePlayed: function(note) {
+            if (this.get("selectedColumn") !== null && this.get("selectedRow") !== null) {
+                var track = this.get("score")[this.get("selectedColumn")];
+                var place = this.get("selectedRow") + (this.get("page") * this._rowsNumber);
+                while (track.length <= place) {
+                    track.push(null);
+                }
+                track[place] = note;
+                this.trigger("change:score");
+            }
+        },
     });
     
     function nbrToNote(nbr) {
         var lst = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
         var cZero = 69 - 9 - (12 * 4);
         return "" + (lst[nbr % 12]) + (Math.floor((nbr - cZero) / 12));
+    }
+    
+    function tabScoreToSaiScore(score) {
+        var bpm = 120;
+        var step = (60 / bpm) / 2;
+        var newScore = _.map(score, function(track) {
+            var current = 0;
+            var lst = [];
+            _.each(track, function(note) {
+                if (note !== null) {
+                    lst.push([current, note]);
+                }
+                current += step;
+            });
+            return lst;
+        });
+        return newScore;
     }
 
     $(function() {
